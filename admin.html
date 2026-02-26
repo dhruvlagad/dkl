@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - DKL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        h1 {
+            color: #333;
+            font-size: 28px;
+        }
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .logout-btn:hover {
+            background: #c82333;
+        }
+        .upload-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .upload-section h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upload-area:hover {
+            background: #f0f4ff;
+            border-color: #764ba2;
+        }
+        .upload-area.dragover {
+            background: #e8f0fe;
+            border-color: #4285f4;
+        }
+        #fileInput {
+            display: none;
+        }
+        .upload-icon {
+            font-size: 48px;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .upload-text {
+            color: #666;
+            font-size: 16px;
+        }
+        .file-list {
+            margin-top: 20px;
+        }
+        .file-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .file-preview {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .upload-btn {
+            background: #28a745;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            width: 100%;
+        }
+        .upload-btn:hover {
+            background: #218838;
+        }
+        .upload-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .gallery-section {
+            margin-top: 30px;
+        }
+        .gallery-section h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .gallery-item:hover .delete-btn {
+            opacity: 1;
+        }
+        .delete-btn:hover {
+            background: rgba(200, 35, 51, 1);
+        }
+        .message {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 20px;
+            display: none;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Admin Panel</h1>
+            <a href="/auth/logout" class="logout-btn">Logout</a>
+        </header>
+
+        <div id="message" class="message"></div>
+
+        <div class="upload-section">
+            <h2>Upload Images</h2>
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">
+                    <strong>Click to browse</strong> or drag and drop images here
+                    <br><small>Supported: JPG, PNG, GIF, WEBP (Max 10MB each)</small>
+                </div>
+                <input type="file" id="fileInput" multiple accept="image/jpeg,image/png,image/gif,image/webp">
+            </div>
+            
+            <div class="file-list" id="fileList"></div>
+            
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill">0%</div>
+            </div>
+            
+            <button class="upload-btn" id="uploadBtn" disabled>Upload Images</button>
+        </div>
+
+        <div class="gallery-section">
+            <h2>Uploaded Images</h2>
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- Images will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedFiles = [];
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const galleryGrid = document.getElementById('galleryGrid');
+        const messageDiv = document.getElementById('message');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+
+        // Check authentication
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/check-auth');
+                const data = await response.json();
+                if (!data.authenticated) {
+                    window.location.href = '/';
+                }
+            } catch (error) {
+                window.location.href = '/';
+            }
+        }
+
+        checkAuth();
+
+        // Upload area click
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        function handleFiles(files) {
+            const validFiles = Array.from(files).filter(file => {
+                if (!file.type.startsWith('image/')) {
+                    showMessage('Only image files are allowed', 'error');
+                    return false;
+                }
+                if (file.size > 10 * 1024 * 1024) {
+                    showMessage(`${file.name} is too large (max 10MB)`, 'error');
+                    return false;
+                }
+                return true;
+            });
+
+            selectedFiles = [...selectedFiles, ...validFiles];
+            displayFileList();
+            uploadBtn.disabled = selectedFiles.length === 0;
+        }
+
+        function displayFileList() {
+            if (selectedFiles.length === 0) {
+                fileList.innerHTML = '';
+                return;
+            }
+
+            fileList.innerHTML = selectedFiles.map((file, index) => {
+                const preview = URL.createObjectURL(file);
+                return `
+                    <div class="file-item">
+                        <div class="file-info">
+                            <img src="${preview}" class="file-preview" alt="${file.name}">
+                            <span>${file.name}</span>
+                        </div>
+                        <button onclick="removeFile(${index})" style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Remove</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.removeFile = function(index) {
+            selectedFiles.splice(index, 1);
+            displayFileList();
+            uploadBtn.disabled = selectedFiles.length === 0;
+        };
+
+        // Upload images
+        uploadBtn.addEventListener('click', async () => {
+            if (selectedFiles.length === 0) return;
+
+            const formData = new FormData();
+            selectedFiles.forEach(file => {
+                formData.append('images', file);
+            });
+
+            uploadBtn.disabled = true;
+            progressBar.style.display = 'block';
+            progressFill.style.width = '0%';
+            progressFill.textContent = '0%';
+
+            try {
+                const xhr = new XMLHttpRequest();
+                
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        const percent = Math.round((e.loaded / e.total) * 100);
+                        progressFill.style.width = percent + '%';
+                        progressFill.textContent = percent + '%';
+                    }
+                });
+
+                xhr.addEventListener('load', () => {
+                    if (xhr.status === 200) {
+                        showMessage('Images uploaded successfully!', 'success');
+                        selectedFiles = [];
+                        displayFileList();
+                        fileInput.value = '';
+                        loadGallery();
+                        setTimeout(() => {
+                            progressBar.style.display = 'none';
+                        }, 1000);
+                    } else {
+                        showMessage('Upload failed: ' + xhr.responseText, 'error');
+                        progressBar.style.display = 'none';
+                    }
+                    uploadBtn.disabled = false;
+                });
+
+                xhr.addEventListener('error', () => {
+                    showMessage('Upload failed. Please try again.', 'error');
+                    uploadBtn.disabled = false;
+                    progressBar.style.display = 'none';
+                });
+
+                xhr.open('POST', '/api/upload');
+                xhr.send(formData);
+            } catch (error) {
+                showMessage('Upload failed: ' + error.message, 'error');
+                uploadBtn.disabled = false;
+                progressBar.style.display = 'none';
+            }
+        });
+
+        // Load gallery
+        async function loadGallery() {
+            try {
+                const response = await fetch('/api/images');
+                const images = await response.json();
+                
+                if (images.length === 0) {
+                    galleryGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">No images uploaded yet</p>';
+                    return;
+                }
+
+                galleryGrid.innerHTML = images.map(img => `
+                    <div class="gallery-item">
+                        <img src="/artwork/${img}" alt="${img}">
+                        <button class="delete-btn" onclick="deleteImage('${img}')" title="Delete image">×</button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading gallery:', error);
+                galleryGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #dc3545;">Error loading images</p>';
+            }
+        }
+
+        window.deleteImage = async function(filename) {
+            if (!confirm(`Are you sure you want to delete ${filename}?`)) return;
+
+            try {
+                const response = await fetch(`/api/images/${filename}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showMessage('Image deleted successfully', 'success');
+                    loadGallery();
+                } else {
+                    showMessage('Failed to delete image', 'error');
+                }
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        };
+
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = 'message ' + type;
+            setTimeout(() => {
+                messageDiv.className = 'message';
+            }, 5000);
+        }
+
+        // Load gallery on page load
+        loadGallery();
+    </script>
+</body>
+</html>

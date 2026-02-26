@@ -1,0 +1,29 @@
+{
+  "name": "dkl-portfolio",
+  "version": "1.0.0",
+  "description": "Portfolio website with GitHub OAuth admin panel",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "portfolio",
+    "oauth",
+    "github",
+    "image-upload"
+  ],
+  "author": "Dhruv Kiran Lagad",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.22.1",
+    "express-session": "^1.17.3",
+    "multer": "^1.4.5-lts.1",
+    "passport": "^0.6.0",
+    "passport-github2": "^0.1.12"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
