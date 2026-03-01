@@ -18,7 +18,7 @@ if (!fs.existsSync(artworkDir)) {
 
 // Session configuration
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'your-secret-key-change-this',
+    secret: process.env.SESSION_SECRET || 'dhruvlagads32characterssecretkey',
     resave: false,
     saveUninitialized: false,
     cookie: {
