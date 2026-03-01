@@ -16,6 +16,7 @@
   "author": "Dhruv Kiran Lagad",
   "license": "MIT",
   "dependencies": {
+    "cors": "^2.8.6",
     "dotenv": "^16.3.1",
     "express": "^4.22.1",
     "express-session": "^1.17.3",

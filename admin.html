@@ -227,7 +227,7 @@
     <div class="container">
         <header>
             <h1>🎨 Admin Panel</h1>
-            <a href="/auth/logout" class="logout-btn">Logout</a>
+            <a href="../auth/logout" class="logout-btn">Logout</a>
         </header>
 
         <div id="message" class="message"></div>
@@ -259,9 +259,14 @@
             </div>
         </div>
     </div>
-
+    
+    ```javascript
+    const API_BASE = 'https://dkl-ymai.onrender.com';
+    ```
     <script>
         let selectedFiles = [];
+        const API_BASE = window.location.hostname === 'localhost'? 'http://localhost:3000'
+  : 'https://dkl-ymai.onrender.com';
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
         const fileList = document.getElementById('fileList');
@@ -274,10 +279,11 @@
         // Check authentication
         async function checkAuth() {
             try {
-                const response = await fetch('/api/check-auth');
+                const response = await fetch(`${API_BASE}/api/check-auth`);
                 const data = await response.json();
                 if (!data.authenticated) {
                     window.location.href = '/';
+                    window.open('/', '_self');
                 }
             } catch (error) {
                 window.location.href = '/';
@@ -402,7 +408,7 @@
                     progressBar.style.display = 'none';
                 });
 
-                xhr.open('POST', '/api/upload');
+                xhr.open('POST', '${API_BASE}/api/upload');
                 xhr.send(formData);
             } catch (error) {
                 showMessage('Upload failed: ' + error.message, 'error');
@@ -414,7 +420,7 @@
         // Load gallery
         async function loadGallery() {
             try {
-                const response = await fetch('/api/images');
+                const response = await fetch(`${API_BASE}/api/images`);
                 const images = await response.json();
                 
                 if (images.length === 0) {
@@ -438,7 +444,7 @@
             if (!confirm(`Are you sure you want to delete ${filename}?`)) return;
 
             try {
-                const response = await fetch(`/api/images/${filename}`, {
+                const response = await fetch(`${API_BASE}/api/images/${filename}`, {
                     method: 'DELETE'
                 });
 

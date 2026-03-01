@@ -5,10 +5,26 @@ const GitHubStrategy = require('passport-github2').Strategy;
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// CORS configuration for GitHub Pages frontend
+const allowedOrigins = [
+    'https://dhruvlagad.github.io',
+    'http://localhost:3000',
+    'http://localhost:5173', // Vite dev server
+    process.env.FRONTEND_URL // Add custom frontend URL from .env if needed
+].filter(Boolean);
+
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true, // Allow cookies to be sent with requests
+    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Ensure artwork directory exists
 const artworkDir = path.join(__dirname, 'artwork');
